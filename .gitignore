@@ -1,0 +1,14 @@
+# IntelliJ IDEA project files
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Exclude all the .DS_Store files on macOS
+.DS_Store
+
+# IDE directories
+.vscode/
+.vscode-oss/
+.vscode-test/
+.vscode-remote/
