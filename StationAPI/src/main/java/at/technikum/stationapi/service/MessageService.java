@@ -6,7 +6,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @Service

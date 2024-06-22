@@ -1,15 +1,13 @@
 package at.technikum.stationdatacollector.Controller;
 
-import at.technikum.stationdatacollector.Model.Model;
+import at.technikum.stationdatacollector.dto.Station;
 import at.technikum.stationdatacollector.Service.DatabaseService;
 import at.technikum.stationdatacollector.Service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeoutException;
 
 @Controller
 public class CollectorController {
@@ -23,12 +21,6 @@ public class CollectorController {
         this.messageService = messageService;
     }
 
-    // Startet den Listener für Nachrichten
-    public void run() throws IOException, TimeoutException {
-        String[] subscribe = {"data_collector"};
-        messageService.listen(subscribe, this);
-    }
-
     // Verarbeitet Nachrichten und sammelt Stationsdaten
     public void collect(String customerId, String message) {
         if ("end".equals(message)) {
@@ -36,10 +28,10 @@ public class CollectorController {
         } else {
             try {
                 String dbUrl = getDatabaseUrlForStation(message);
-                ArrayList<Model> stations = databaseService.getStations(customerId, dbUrl);
+                ArrayList<Station> stations = databaseService.getStations(customerId, dbUrl);
                 if (stations != null) {
-                    for (Model station : stations) {
-                        messageService.sendMessage("collection_receiver", index + " " + station.getKwh(), customerId);
+                    for (Station station : stations) {
+                        messageService.send("collection_receiver", index + " " + station.getKwh(), customerId);
                     }
                     index++;
                 }
@@ -55,7 +47,7 @@ public class CollectorController {
     public void finalizeCollection(String customerId) {
         index = 1;
         try {
-            messageService.sendMessage("collection_receiver", "finished", customerId);
+            messageService.send("collection_receiver", "finished", customerId);
         } catch (Exception e) {
             e.printStackTrace();
         }
