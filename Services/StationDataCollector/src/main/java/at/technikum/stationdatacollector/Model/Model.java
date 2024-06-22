@@ -1,10 +1,10 @@
 package at.technikum.stationdatacollector.Model;
 
-//Modellklasse, die die Informationen einer Station repräsentiert (ID, kWh, Kunden-ID).
-
+// Modellklasse, die die Informationen einer Station repräsentiert (ID, kWh, Kunden-ID)
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
 @AllArgsConstructor
 public class Model {
         @Getter @Setter
@@ -15,5 +15,4 @@ public class Model {
 
         @Getter @Setter
         private int customer_id;
-
 }

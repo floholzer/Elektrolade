@@ -1,25 +1,40 @@
 package at.technikum.stationdatacollector.Service;
-//Verwaltet das Senden und Empfangen von Nachrichten über RabbitMQ.
+
+import at.technikum.stationdatacollector.Controller.CollectorController;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeoutException;
+
+// Verwaltet das Senden und Empfangen von Nachrichten über RabbitMQ
+@Service
 public class MessageService {
 
-//    sendMessage-Methode sendet eine Nachricht an eine bestimmte Zieladresse.
-    public void boolean sendMessage(String to, String message, String customer_id) throws Exception {
+    private ConnectionFactory factory = new ConnectionFactory();
+
+    // Sendet eine Nachricht an eine bestimmte Zieladresse
+    public boolean sendMessage(String to, String message, String customerId) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
-        message = customer_id + " " + message;
-    try (Connection connection = factory.newConnection();
-         Channel channel = connection.createChannel()) {
+        message = customerId + " " + message;
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
 
-        channel.exchangeDeclare("spring_app", "direct");
+            channel.exchangeDeclare("spring_app", "direct");
 
-        channel.basicPublish("spring_app", to, null, message.getBytes("UTF-8"));
-        System.out.println(" [x] Sent '" + to + "':'" + message + "'");
+            channel.basicPublish("spring_app", to, null, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent '" + to + "':'" + message + "'");
+        }
+        return true;
     }
-    return true;
-}
 
-//    listen-Methode hört auf Nachrichten und ruft bei Erhalt einer Nachricht die collect-Methode im CollectionController auf.
-    public void listen(String[] argv)  throws IOException, TimeoutException {
+    // Hört auf Nachrichten und ruft bei Erhalt die collect-Methode im CollectorController auf
+    public void listen(String[] argv, CollectorController collectorController) throws IOException, TimeoutException {
         factory.setHost("localhost");
         factory.setPort(30003);
         Connection connection = factory.newConnection();
@@ -37,14 +52,13 @@ public class MessageService {
             String[] message_info = message.split(" ");
             System.out.println(" [x] Received '" + message + "'");
             try {
-              CollectionController.collect(message_info[0], message_info[1]);
+                collectorController.collect(message_info[0], message_info[1]);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         };
 
         System.out.println(" [x] Station Data Collector listening to  '" + queueName + "'");
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
-
 }
