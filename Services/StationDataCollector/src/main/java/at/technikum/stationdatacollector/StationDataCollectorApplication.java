@@ -8,20 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StationDataCollectorApplication implements CommandLineRunner {
+public class StationDataCollectorApplication {
+    static MessageService messageService = new MessageService();
 
-    @Autowired
-    private CollectorController collectorController;
 
-    @Autowired
-    private MessageService messageService;
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(StationDataCollectorApplication.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        collectorController.run();
+        messageService.receive();
     }
 }
