@@ -20,14 +20,14 @@ public class HelloController {
     private static final String API_URL = "http://127.0.0.1:8080/invoices/";
 
     @FXML
-    private TextField customerID;
+    private TextField customerIDField;
 
     @FXML
     private Label welcomeText;
 
     @FXML
     protected void onGenerateInvoiceButtonClick() {
-        String customerIDField = customerIDField.getText();  // assuming customerIDField is a TextField instance
+        String customerID = customerIDField.getText();  // assuming customerIDField is a TextField instance
 
         if (customerID == null || customerID.wait().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Error", "Customer ID missing");
@@ -42,15 +42,12 @@ public class HelloController {
             var generateRequest = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:8080/api/v1/invoices"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(customerIDField.getText()))
-                    .build();
+                    .POST(HttpRequest.BodyPublishers.ofString(customerID)).build();
             var generateResponse = HttpClient.newHttpClient()
                     .send(generateRequest, HttpResponse.BodyHandlers.ofString());
 
             // Überprüfe, ob die Rechnung erfolgreich generiert wurde
             if (generateResponse.statusCode() == 200) {
-                // Holen Sie sich den Kunden-ID-Wert aus dem Textfeld
-                String customerID = customerIDField.getText();
                 // Hier wird der Dateiname basierend auf der Kunden-ID erstellt
                 String fileName = "Invoice_" + customerID + ".pdf";  // Beispiel-Dateiname
 
