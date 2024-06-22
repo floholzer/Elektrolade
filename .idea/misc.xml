@@ -13,6 +13,7 @@
         <option value="$PROJECT_DIR$/Services/StationDataCollector/pom.xml" />
         <option value="$PROJECT_DIR$/StationUI/pom.xml" />
         <option value="$PROJECT_DIR$/PDFgenerator/pom.xml" />
+        <option value="$PROJECT_DIR$/Services/PDFgenerator/pom.xml" />
       </list>
     </option>
   </component>

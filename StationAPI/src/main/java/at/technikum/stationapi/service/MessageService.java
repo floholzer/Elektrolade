@@ -17,7 +17,6 @@ public class MessageService {
     public boolean send(String queueName, String message) throws IOException, TimeoutException {
         factory.setHost("localhost");
         factory.setPort(30003);
-        UUID uuid = UUID.randomUUID();
         try (
                 Connection connection = factory.newConnection();
              Channel channel = connection.createChannel();
@@ -26,7 +25,7 @@ public class MessageService {
             channel.queueDeclare(queueName, false, false, false, null);
 
             channel.basicPublish("", queueName, null, message.getBytes());
-            System.out.println("[#" + uuid + "] Sent to '" + queueName + "', Message: '" + message + "'");
+            System.out.println(">> Sent to Queue: '" + queueName + "', Message(Customer_id): '" + message + "'");
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
             return false;
