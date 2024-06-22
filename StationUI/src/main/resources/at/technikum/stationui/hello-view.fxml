@@ -18,11 +18,11 @@
          <Image url="@../../../elektrolade_logo.jpg" />
       </image>
    </ImageView>
-   <TextField promptText="Enter Customer ID" />
+   <TextField fx:id="customerIDField" promptText="Enter Customer ID" />
    <HBox prefHeight="100.0" prefWidth="200.0">
       <children>
-        <Button onAction="#onHelloButtonClick" text="Generate Invoice" />
-         <Button mnemonicParsing="false" text="Exit" />
+        <Button onAction="#onGenerateInvoiceButtonClick" text="Generate Invoice" />
+         <Button onAction="#onExitButtonClick" mnemonicParsing="false" text="Exit" />
       </children>
    </HBox>
 
