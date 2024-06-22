@@ -16,7 +16,7 @@ public class DataDispatcherController {
     public static void sendData(String customerId) throws Exception {
         ArrayList<Station> stations = dataService.getStations();
 
-        messageService.send("collection_receiver", "start", customerId);
+        messageService.send("collection_receiver", "collection started", customerId);
 
         for (Station station : stations) {
             try {
@@ -26,7 +26,7 @@ public class DataDispatcherController {
             }
         }
 
-        messageService.send("data_collector", "end", customerId);
+        messageService.send("data_collector", "collection ended", customerId);
     }
 
 }

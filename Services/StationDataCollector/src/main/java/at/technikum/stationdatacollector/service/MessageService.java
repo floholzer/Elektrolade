@@ -1,6 +1,6 @@
-package at.technikum.stationdatacollector.Service;
+package at.technikum.stationdatacollector.service;
 
-import at.technikum.stationdatacollector.Controller.CollectorController;
+import at.technikum.stationdatacollector.controller.CollectorController;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -15,18 +15,19 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class MessageService {
     private ConnectionFactory factory = new ConnectionFactory();
-    private CollectorController collectorController;
+    private  CollectorController collectorController;
+
 
     // Sendet eine Nachricht an eine bestimmte Zieladresse
-    public boolean send(String queueName, String message, String customer_id) throws Exception {
+    public boolean send(String message, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
         message = "customer_id: " + customer_id + ", msg: " + message;
+        String queueName = "data_receiver";
         try (
                 Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()
         ) {
-
             channel.queueDeclare(queueName, false, false, false, null);
 
             channel.basicPublish("", queueName, null, message.getBytes());
@@ -47,10 +48,10 @@ public class MessageService {
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            String[] message_info = message.split(" ");
+            String[] message_info = message.split(",");
             System.out.println(">> DataCollector: Received Message:'" + message + "'");
             try {
-                collectorController.collect(message_info[0], message_info[1]);
+                CollectorController.collect(message_info[0], message_info[1]);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,4 +1,4 @@
-package at.technikum.stationdatacollector.Service;
+package at.technikum.stationdatacollector.service;
 
 import at.technikum.stationdatacollector.dto.Station;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,8 @@ public class DatabaseService {
 
     // Stellt eine Verbindung zur angegebenen Datenbank her
     private static Connection connect(String dbUrl) throws SQLException {
-        return DriverManager.getConnection(dbUrl, "postgres", "postgres");
+        String connectionString="jdbc:postgresql://"+dbUrl+"/stationdb";
+        return DriverManager.getConnection(connectionString, "postgres", "postgres");
     }
 
     // Ruft die Informationen der Stationen für einen bestimmten Kunden ab

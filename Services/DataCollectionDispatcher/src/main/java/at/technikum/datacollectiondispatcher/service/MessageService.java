@@ -19,7 +19,7 @@ public class MessageService {
     public boolean send(String queueName, String message, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
-        message = "customer_id: " + customer_id + ", msg: " + message;
+        message = customer_id + "," + message;
 
         try (
                 Connection connection = factory.newConnection();
