@@ -3,35 +3,35 @@ package at.technikum.stationapi.controller;
 import at.technikum.stationapi.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/invoices")
 public class RESTController {
     @Autowired
-    private static MessageService messageService = new MessageService();
+    private final MessageService messageService = new MessageService();
 
-    //gets file from storage
-    @GetMapping("/invoices/{id}")
-    public String getInvoice(@PathVariable int id){
-        return "Invoice is retreived, please wait until download";
-    }
-
-
-    //sends message to get invoice process started
-    @GetMapping("/invoice/{customer_id}")
-    public void collectInvoice(@PathVariable int customer_id) {
-        if(customer_id == Integer.MIN_VALUE){
+    //checks if customer_id is valid and sends message to start the data gathering process
+    @PostMapping("/{customer_id}")
+    public void collectInvoice(@PathVariable("customer_id") int customer_id) {
+        if(customer_id < 0 || customer_id == Integer.MAX_VALUE){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         try {
-            //messageService.sendMessage("spring_app", ""+customer_id);
+            messageService.send("Start_Signal", ""+customer_id);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/{customer_id")
+    public String getInvoice(@PathVariable int customer_id){
+        if(customer_id < 0 || customer_id == Integer.MAX_VALUE){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return "Invoice Link: link_to_invoice";
+
+        // return HttpStatus.NOT_FOUND, "entity not found"
     }
 }
