@@ -39,4 +39,8 @@ public class ReceiverController {
             stationData.getStations().add(newStation);
         }
     }
+
+    public StationData getStationData() {
+        return stationData;
+    }
 }

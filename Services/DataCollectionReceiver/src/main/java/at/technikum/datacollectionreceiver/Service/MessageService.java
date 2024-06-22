@@ -13,7 +13,11 @@ import java.util.concurrent.TimeoutException;
 
 @Service
 public class MessageService {
-    private final ConnectionFactory factory = new ConnectionFactory();
+    private ConnectionFactory factory = new ConnectionFactory();
+
+    public void setConnectionFactory(ConnectionFactory factory) {
+        this.factory = factory;
+    }
 
     public boolean sendMessage(String to, String message) throws Exception {
         factory.setHost("localhost");
@@ -53,6 +57,6 @@ public class MessageService {
             }
         };
         System.out.println(" [x] Collection receiver listening to  '" + queueName + "'");
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
 }
