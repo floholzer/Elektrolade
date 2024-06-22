@@ -25,7 +25,7 @@ public class RESTController {
         }
     }
 
-    @GetMapping("/{customer_id")
+    @GetMapping("/{customer_id}")
     public String getInvoice(@PathVariable int customer_id){
         if(customer_id < 0 || customer_id == Integer.MAX_VALUE){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

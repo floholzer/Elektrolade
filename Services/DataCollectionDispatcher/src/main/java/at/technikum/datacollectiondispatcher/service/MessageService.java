@@ -1,5 +1,6 @@
 package at.technikum.datacollectiondispatcher.service;
 
+import at.technikum.datacollectiondispatcher.controller.DataDispatcherController;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @Service
@@ -19,8 +19,7 @@ public class MessageService {
     public boolean send(String queueName, String message, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
-        message = customer_id + " -> " + message;
-        UUID uuid = UUID.randomUUID();
+        message = "customer_id: " + customer_id + ", msg: " + message;
 
         try (
                 Connection connection = factory.newConnection();
@@ -30,34 +29,29 @@ public class MessageService {
             channel.queueDeclare(queueName, false, false, false, null);
 
             channel.basicPublish("", queueName, null, message.getBytes());
-            System.out.println(" [#"+ uuid + "] Sent to '" + queueName + "', Message:'" + message + "'");
+            System.out.println(">> Sent to Queue: '" + queueName + "', Message: '" + message + "'");
         }
         return true;
     }
 
-    public void reveive(String[] argv) throws IOException, TimeoutException {
+    public void receive() throws IOException, TimeoutException {
         factory.setHost("localhost");
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
+        String queueName = "Start_Signal";
 
-        channel.exchangeDeclare("spring_app", "direct");
-        String queueName = channel.queueDeclare().getQueue();
-
-        System.out.println(" [x] Dispatcher listening to  '" + queueName + "'");
-        for (String bindingKey : argv) {
-            channel.queueBind(queueName, "spring_app", bindingKey);
-        }
+        System.out.println(">> Dispatcher listening to Queue: " + queueName);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
+            System.out.println(">> Received Customer_id: " + message);
             try {
-                //DistpatchingController.dispatch(message);
+                DataDispatcherController.sendData(message);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         };
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
 }

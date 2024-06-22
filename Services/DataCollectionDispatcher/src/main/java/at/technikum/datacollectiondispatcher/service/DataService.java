@@ -3,7 +3,6 @@ package at.technikum.datacollectiondispatcher.service;
 import at.technikum.datacollectiondispatcher.dto.Station;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
