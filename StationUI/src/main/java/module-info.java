@@ -8,6 +8,7 @@ module at.technikum.stationui {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.net.http;
 
     opens at.technikum.stationui to javafx.fxml;
     exports at.technikum.stationui;
