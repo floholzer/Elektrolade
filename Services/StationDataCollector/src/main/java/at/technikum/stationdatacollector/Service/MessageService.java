@@ -14,43 +14,41 @@ import java.util.concurrent.TimeoutException;
 // Verwaltet das Senden und Empfangen von Nachrichten über RabbitMQ
 @Service
 public class MessageService {
-
     private ConnectionFactory factory = new ConnectionFactory();
+    private CollectorController collectorController;
 
     // Sendet eine Nachricht an eine bestimmte Zieladresse
-    public boolean sendMessage(String to, String message, String customerId) throws Exception {
+    public boolean send(String queueName, String message, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
-        message = customerId + " " + message;
-        try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+        message = "customer_id: " + customer_id + ", msg: " + message;
+        try (
+                Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()
+        ) {
 
-            channel.exchangeDeclare("spring_app", "direct");
+            channel.queueDeclare(queueName, false, false, false, null);
 
-            channel.basicPublish("spring_app", to, null, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + to + "':'" + message + "'");
+            channel.basicPublish("", queueName, null, message.getBytes());
+            System.out.println(">> Sent to Queue:'" + queueName + "', Message:'" + message + "'");
         }
         return true;
     }
 
     // Hört auf Nachrichten und ruft bei Erhalt die collect-Methode im CollectorController auf
-    public void listen(String[] argv, CollectorController collectorController) throws IOException, TimeoutException {
+    public void receive() throws IOException, TimeoutException {
         factory.setHost("localhost");
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
+        String queueName = "data_collector";
 
-        channel.exchangeDeclare("spring_app", "direct");
-
-        String queueName = channel.queueDeclare().getQueue();
-        for (String bindingKey : argv) {
-            channel.queueBind(queueName, "spring_app", bindingKey);
-        }
+        System.out.println(">> DataCollector listening to Queue:'" + queueName + "'");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             String[] message_info = message.split(" ");
-            System.out.println(" [x] Received '" + message + "'");
+            System.out.println(">> DataCollector: Received Message:'" + message + "'");
             try {
                 collectorController.collect(message_info[0], message_info[1]);
             } catch (Exception e) {
@@ -58,7 +56,6 @@ public class MessageService {
             }
         };
 
-        System.out.println(" [x] Station Data Collector listening to  '" + queueName + "'");
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
 }
