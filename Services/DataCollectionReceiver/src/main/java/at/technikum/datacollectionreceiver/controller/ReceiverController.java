@@ -8,27 +8,34 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 @Controller
 public class ReceiverController {
-    private static StationData stationData;
+    private static final Map<String, ArrayList<String>> stationDataMap = new HashMap<>();
     private static final MessageService messageService = new MessageService();
-
+    private static String customerId;
 
     public static void collect(String[] message) throws Exception {
-        if (message[1].equals("start")) {
-            stationData = new StationData(message[0], new ArrayList<>());
 
-        } else if (message[1].equals("finished")) {
-            messageService.send("start " + stationData.getCustomer_id());
-            for (Station station : stationData.getStations()) {
-                messageService.send(station.getId() + " " + station.getKwh());
+        if (message[0].equals("data end")) {
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, ArrayList<String>> entry : stationDataMap.entrySet()) {
+                int stationId = Integer.parseInt(entry.getKey())+1;
+                ArrayList<String> kwhList = entry.getValue();
+                String kwhListString = String.join(",", kwhList);
+                sb.append(customerId).append(";").append(stationId).append(";").append(kwhListString).append("|");
             }
-            messageService.send("end " + stationData.getCustomer_id());
+            sb.deleteCharAt(sb.length() - 1); // Remove the last "|"
+            messageService.send(sb.toString());
+            stationDataMap.clear();
         } else {
-            Station newStation = new Station(message[1], message[2]);
-            stationData.getStations().add(newStation);
+            customerId = message[0];
+            String stationId = message[1];
+            String kwh = message[2];
+            stationDataMap.computeIfAbsent(stationId, k -> new ArrayList<>()).add(kwh);
         }
     }
 }

@@ -21,10 +21,12 @@ public class MessageService {
         String queueName = "pdf_generator";
         try (
                 Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()
+                Channel channel = connection.createChannel()
         ) {
+            channel.queueDeclare(queueName, false, false, false, null);
+
             channel.basicPublish("", queueName, null, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(">> CollectionReceiver sent to Queue:'" + queueName + "':'" + message + "'");
+            System.out.println(">> CollectionReceiver sent to Queue:'" + queueName + "', Message:'" + message + "'");
         }
         return true;
     }
@@ -34,14 +36,18 @@ public class MessageService {
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
-        String queueName = "collection_receiver";
+        String queueName = "job_notify_queue";
+
+        System.out.println(">> CollectionReceiver listening to Queue: '" + queueName + "'");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(">> CollectionReceiver received Message:'" + message + "'");
-
+            System.out.println(">> CollectionReceiver received Message: '" + message + "'");
+            String[] messages = message.split(",");
+            if (messages[1].equals("collection started")) {
+                System.out.println("Job started notification received");
+            }
         };
-        System.out.println(">> CollectionReceiver listening to Queue:'" + queueName + "'");
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
 
@@ -50,12 +56,13 @@ public class MessageService {
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
-        String queueName = "data_collector";
+        String queueName = "station_data_queue";
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(">> DataReceiver received Message:'" + message + "'");
-            String[] messages = message.split(" ");
+            System.out.println(">> DataReceiver received Message: '" + message + "'");
+
+            String[] messages = message.split(",");
 
             try {
                 ReceiverController.collect(messages);
@@ -64,7 +71,7 @@ public class MessageService {
             }
         };
 
-        System.out.println(">> CollectionReceiver listening to Queue:'" + queueName + "'");
+        System.out.println(">> CollectionReceiver listening to Queue: '" + queueName + "'");
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
     }
 }

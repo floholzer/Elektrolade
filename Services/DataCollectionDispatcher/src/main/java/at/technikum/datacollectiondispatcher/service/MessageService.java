@@ -29,7 +29,7 @@ public class MessageService {
             channel.queueDeclare(queueName, false, false, false, null);
 
             channel.basicPublish("", queueName, null, message.getBytes());
-            System.out.println(">> Sent to Queue: '" + queueName + "', Message: '" + message + "'");
+            System.out.println(">> Dispatcher sent to Queue: '" + queueName + "', Message: '" + message + "'");
         }
         return true;
     }
@@ -39,13 +39,13 @@ public class MessageService {
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
-        String queueName = "Start_Signal";
+        String queueName = "start_queue";
 
         System.out.println(">> Dispatcher listening to Queue: " + queueName);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(">> Received Customer_id: " + message);
+            System.out.println(">> Dispatcher received Message: " + message);
             try {
                 DataDispatcherController.sendData(message);
             } catch (Exception e) {

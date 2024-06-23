@@ -19,7 +19,7 @@ public class RESTController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         try {
-            messageService.send("Start_Signal", ""+customer_id);
+            messageService.send(String.valueOf(customer_id));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -31,7 +31,5 @@ public class RESTController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return "Invoice Link: link_to_invoice";
-
-        // return HttpStatus.NOT_FOUND, "entity not found"
     }
 }
