@@ -11,7 +11,6 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
 import at.technikum.pdfgenerator.service.DataService;
-import at.technikum.pdfgenerator.service.MessageService;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 
@@ -19,48 +18,62 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class PDFController {
-    public static final MessageService messageService = new MessageService();
     public static final DataService dataService = new DataService();
 
-    public void generateInvoice() throws Exception {
-        int CustomerID = 1; // TODO Replace with actual customer ID from Message Queue
-        Customer customer = dataService.getCustomer(CustomerID);
+    public static void generateInvoice(String messageData) throws Exception {
+        String[] stationDataArray = messageData.split("\\|");
+        int customerId = Integer.parseInt(stationDataArray[0].split(";")[0]);
+        Customer customer = dataService.getCustomer(customerId);
+
 
         try {
-            PdfWriter writer = new PdfWriter("src/main/resources/files/invoice-"+customer.getId()+".pdf");
+            PdfWriter writer = new PdfWriter("Services/PDFgenerator/src/main/resources/files/invoice-"+customer.getId()+".pdf");
             PdfDocument pdf = new PdfDocument(writer);
             Document doc = new Document(pdf);
-            Image img = new Image(ImageDataFactory.create("src/main/resources/images/logo.png"));
+            Image img = new Image(ImageDataFactory.create("Services/PDFgenerator/src/main/resources/images/logo.jpeg"));
 
             doc.add(img);
             doc.add(new Paragraph("Invoice").setFontSize(18).setFontColor(ColorConstants.BLACK));
             doc.add(new Paragraph(LocalDateTime.now().toString()).setFontSize(12).setFontColor(ColorConstants.BLACK));
             doc.add(new Paragraph("Customer: " + customer.getFirst_name() + " " + customer.getLast_name()).setFontSize(12).setFontColor(ColorConstants.BLACK));
 
-            // Cost Table
-            float[] columnWidths = {1, 5, 2, 2};
-            Table table = new Table(UnitValue.createPercentArray(columnWidths)).useAllAvailableWidth();
+            for (String stationData : stationDataArray) {
+                String[] data = stationData.split(";");
+                String stationId = data[1];
+                String[] kwhValues = data[2].split(",");
 
-            table.addHeaderCell(new Cell().add(new Paragraph("Nr.").setFontSize(12)));
-            table.addHeaderCell(new Cell().add(new Paragraph("Station").setFontSize(12)));
-            table.addHeaderCell(new Cell().add(new Paragraph("kwH").setFontSize(12)));
-            table.addHeaderCell(new Cell().add(new Paragraph("Cost").setFontSize(12)));
+                doc.add(new Paragraph("Station: " + stationId).setFontSize(12).setFontColor(ColorConstants.BLACK));
 
-            // Example invoice item TODO Replace with actual invoice items from Message Queue
-            table.addCell("1");
-            table.addCell("Station 1");
-            table.addCell("25");
-            table.addCell("10,00 €");
+                // Cost Table
+                float[] columnWidths = {1, 5, 2};
+                Table table = new Table(UnitValue.createPercentArray(columnWidths)).useAllAvailableWidth();
 
-            doc.add(table);
+                table.addHeaderCell(new Cell().add(new Paragraph("Nr.").setFontSize(12)));
+                table.addHeaderCell(new Cell().add(new Paragraph("kwH").setFontSize(12)));
+                table.addHeaderCell(new Cell().add(new Paragraph("Cost").setFontSize(12)));
 
-            // Total sum TODO Replace with actual total sum from Message Queue
-            doc.add(new Paragraph("Total: 10,00 €").setFontSize(12).setFontColor(ColorConstants.BLACK));
+                double totalCost = 0;
+                for (int i = 0; i < kwhValues.length; i++) {
+                    double kwh = Double.parseDouble(kwhValues[i]);
+                    double cost = kwh * 0.65; // Assuming a cost of 0.65 per kWh
+                    totalCost += cost;
+
+                    table.addCell(String.valueOf(i + 1));
+                    table.addCell(String.valueOf(kwh));
+                    table.addCell(String.format("%.2f €", cost));
+                }
+
+                doc.add(table);
+
+                // Total sum
+                doc.add(new Paragraph("Total: " + String.format("%.2f €", totalCost)).setFontSize(12).setFontColor(ColorConstants.BLACK));
+            }
 
             doc.close();
-            System.out.println(">> PDFGenerator: 'Invoice generated successfully'");
+            System.out.println("PDFGenerator: 'Invoice generated successfully'");
         } catch (Exception e) {
-            throw new IOException("Error while generating PDF" + e.getMessage());
+            e.printStackTrace();
+            throw new IOException("Error while generating PDF" + e.getMessage(), e);
         }
 
     }

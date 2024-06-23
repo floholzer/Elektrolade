@@ -1,5 +1,6 @@
 package at.technikum.pdfgenerator.service;
 
+import at.technikum.pdfgenerator.controller.PDFController;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -27,7 +28,7 @@ public class MessageService {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             System.out.println(">> PDFGenerator received message: " + message);
             try {
-                //DataDispatcherController.sendData(message);
+                PDFController.generateInvoice(message);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -36,3 +37,4 @@ public class MessageService {
     }
 
 }
+
