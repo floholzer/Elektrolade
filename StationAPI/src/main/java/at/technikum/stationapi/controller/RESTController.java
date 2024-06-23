@@ -32,14 +32,6 @@ public class RESTController {
         }
     }
 
-//    @GetMapping("/{customer_id}")
-//    public String getInvoice(@PathVariable int customer_id){
-//        if(customer_id < 0 || customer_id == Integer.MAX_VALUE){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        }
-//        return "StationAPI/src/main/java/at/technikum/stationapi/files/invoice-"+customer_id+".pdf";
-//    }
-
     @GetMapping("/{customer_id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String customer_id) {
         try {
