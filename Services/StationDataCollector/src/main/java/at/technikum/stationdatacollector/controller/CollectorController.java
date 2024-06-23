@@ -19,30 +19,28 @@ public class CollectorController {
     public static void collect(String customerId, String db_url) {
         ArrayList<Station> stations;
         if (db_url.equals("collection ended")) {
-            finalizeCollection(customerId);
+
+            try {
+                messageService.sendEnd();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            index = 0;
         } else {
             try {
                 stations = databaseService.getStations(customerId, db_url);
 
                 if (stations != null) {
                     for (Station station : stations) {
-                        messageService.send(index + " " + station.getKwh(), customerId);
+                        messageService.send(index, String.valueOf(station.getKwh()), customerId);
                     }
-                    index++;
+
                 }
+                index++;
             } catch (Exception e) {
                 throw new RuntimeException("Error while collecting stations." + e.getMessage());
             }
-        }
-    }
-
-    // Beendet die Sammlung der Stationsdaten
-    public static void finalizeCollection(String customerId) {
-        index = 1;
-        try {
-            messageService.send( ">> DataCollector finished", customerId);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

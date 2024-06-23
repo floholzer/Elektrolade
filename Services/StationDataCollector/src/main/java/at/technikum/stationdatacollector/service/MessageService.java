@@ -15,23 +15,39 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class MessageService {
     private ConnectionFactory factory = new ConnectionFactory();
-    private  CollectorController collectorController;
-
 
     // Sendet eine Nachricht an eine bestimmte Zieladresse
-    public boolean send(String message, String customer_id) throws Exception {
+    public boolean send(int stationId, String kwh, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
-        message = "customer_id: " + customer_id + ", msg: " + message;
-        String queueName = "data_receiver";
+        String message = customer_id + ","+ stationId + "," + kwh;
+        String queueName = "station_data_queue";
+
         try (
                 Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()
+                Channel channel = connection.createChannel()
         ) {
             channel.queueDeclare(queueName, false, false, false, null);
 
             channel.basicPublish("", queueName, null, message.getBytes());
-            System.out.println(">> Sent to Queue:'" + queueName + "', Message:'" + message + "'");
+            System.out.println(">> DataCollector sent to Queue:'" + queueName + "', Message:'" + message + "'");
+        }
+        return true;
+    }
+    public boolean sendEnd() throws Exception {
+        factory.setHost("localhost");
+        factory.setPort(30003);
+        String message = "data end";
+        String queueName = "station_data_queue";
+
+        try (
+                Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel()
+        ) {
+            channel.queueDeclare(queueName, false, false, false, null);
+
+            channel.basicPublish("", queueName, null, message.getBytes());
+            System.out.println(">> DataCollector sent to Queue:'" + queueName + "', Message:'" + message + "'");
         }
         return true;
     }
@@ -42,14 +58,14 @@ public class MessageService {
         factory.setPort(30003);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
-        String queueName = "data_collector";
+        String queueName = "stations_info_queue";
 
         System.out.println(">> DataCollector listening to Queue:'" + queueName + "'");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             String[] message_info = message.split(",");
-            System.out.println(">> DataCollector: Received Message:'" + message + "'");
+            System.out.println(">> DataCollector received Message:'" + message + "'");
             try {
                 CollectorController.collect(message_info[0], message_info[1]);
             } catch (Exception e) {
