@@ -1,10 +1,27 @@
 package at.technikum.stationui;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class StationUIController {
 
@@ -14,77 +31,91 @@ public class StationUIController {
     private TextField customerIDField;
 
     @FXML
-    protected void onGenerateInvoiceButtonClick() {
-        String customerID = customerIDField.getText();  // assuming customerIDField is a TextField instance
+    protected void onGenerateInvoiceButtonClick() throws Exception {
+        String customerID = customerIDField.getText();
 
-        if (customerID == null || customerID.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "Customer ID missing");
+        // Überprüfen, ob der Wert eine Zahl ist
+        try {
+            Integer.parseInt(customerID);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Error", "Customer ID must be a number");
             return;
         }
 
-        String fileName = "Invoice_" + customerID + ".pdf";
-        String apiUrl = API_URL + customerID + "/download";
-        /*
-        try {
-            // Generiere die Rechnung
-            var generateRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/api/v1/invoices"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(customerID)).build();
-            var generateResponse = HttpClient.newHttpClient()
-                    .send(generateRequest, HttpResponse.BodyHandlers.ofString());
 
-            // Überprüfe, ob die Rechnung erfolgreich generiert wurde
+
+        // POST-Request senden
+        var generateRequest = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + customerID))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(customerID))
+                .build();
+
+        try {
+            var generateResponse = HttpClient.newHttpClient().send(generateRequest, HttpResponse.BodyHandlers.ofString());
+
+            // Überprüfen, ob die Rechnung erfolgreich generiert wurde
             if (generateResponse.statusCode() == 200) {
 
-                // Erstellen Sie eine HTTP-Anfrage, um die PDF-Datei herunterzuladen
-                HttpRequest downloadRequest = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:8080/api/v1/invoices/" + customerID + "/download"))
-                        .build();
+                // Überprüfen Sie alle 2 Sekunden das Verzeichnis auf neue Dateien
+                ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+                executorService.scheduleAtFixedRate(() -> {
+                    File folder = new File("StationAPI/src/main/java/at/technikum/stationapi/files");
+                    File[] listOfFiles = folder.listFiles();
 
-                // Senden Sie die Anfrage und erhalten Sie die Antwort
-                HttpResponse<java.io.InputStream> downloadResponse = HttpClient.newHttpClient()
-                        .send(downloadRequest, HttpResponse.BodyHandlers.ofInputStream());
+                    if (listOfFiles != null && listOfFiles.length > 0) {
+                        // GET-Request senden
+                        try {
+                            URL url = new URL(API_URL + customerID);
+                            String userHome = System.getProperty("user.home");
+                            String outFileName = userHome+"/downloads/invoice-" + customerID + ".pdf";
+                            Path outPath = Paths.get(outFileName);
 
-                // Überprüfen Sie, ob die Anfrage erfolgreich war (Statuscode 200)
-                if (downloadResponse.statusCode() == 200) {
-                    // Pfad, in dem die heruntergeladene PDF-Datei gespeichert wird
-                    // Holen Sie sich den Benutzerverzeichnis-Pfad
-                    String userHome = System.getProperty("user.home");
+                            try (
+                                    InputStream in = url.openStream();
+                                 OutputStream out = Files.newOutputStream(outPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+                            ) {
 
-                    // Pfad zum "Downloads"-Ordner hinzufügen
-                    String downloadFolderPath = userHome + File.separator + "Downloads";
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
 
-                    // Erstellen Sie den vollständigen Pfad zum Speichern der heruntergeladenen PDF-Datei
-                    String downloadFilePath = downloadFolderPath + File.separator + fileName;
+                                while ((bytesRead = in.read(buffer)) != -1) {
+                                    out.write(buffer, 0, bytesRead);
+                                }
 
-                    // Schreiben Sie die heruntergeladene PDF-Datei in das Dateisystem
-                    try (BufferedInputStream inputStream = new BufferedInputStream(downloadResponse.body());
-                         FileOutputStream fileOutputStream = new FileOutputStream(downloadFilePath)) {
+                                showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice downloaded successfully to " + outFileName);
 
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            fileOutputStream.write(buffer, 0, bytesRead);
+                                // delete the file after downloading
+                                Files.delete(Paths.get("StationAPI/src/main/java/at/technikum/stationapi/files/invoice-" + customerID + ".pdf"));
+                            } catch (Exception e) {
+                                showAlert(Alert.AlertType.WARNING, "Error", "Error occurred while downloading the invoice: " + e.getMessage());
+                            }
+                        } catch (Exception e) {
+                            showAlert(Alert.AlertType.WARNING, "Error", "Invalid URL: " + e.getMessage());
                         }
+
+                        // Stoppen Sie den Executor-Service, nachdem die Datei gefunden wurde
+                        executorService.shutdown();
                     }
-
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Invoice downloaded successfully");
-                }
+                }, 0, 2, TimeUnit.SECONDS);
             } else {
-                    showAlert(Alert.AlertType.ERROR, "Error", "Error occurred while downloading the invoice");
-                }
-            } catch(IOException | InterruptedException e){
-                showAlert(Alert.AlertType.WARNING, "Error", "REST-API Error \n" + e.toString());
+                showAlert(Alert.AlertType.ERROR, "Error", "Error occurred while generating the invoice");
             }
-         */
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.WARNING, "Error", "REST-API Error \n" + e.getMessage());
+        }
+        customerIDField.clear();
     }
-
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+    @FXML
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
     @FXML

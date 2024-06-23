@@ -27,7 +27,7 @@ public class PDFController {
 
 
         try {
-            PdfWriter writer = new PdfWriter("Services/PDFgenerator/src/main/resources/files/invoice-"+customer.getId()+".pdf");
+            PdfWriter writer = new PdfWriter("StationAPI/src/main/java/at/technikum/stationapi/files/invoice-"+customerId+".pdf");
             PdfDocument pdf = new PdfDocument(writer);
             Document doc = new Document(pdf);
             Image img = new Image(ImageDataFactory.create("Services/PDFgenerator/src/main/resources/images/logo.jpeg"));
