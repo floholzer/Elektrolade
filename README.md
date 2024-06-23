@@ -45,3 +45,24 @@ Use the predefined Run/Debug Configurations in your IDE. (Top right corner)\
 - PurpleQueue = job_notify_queue
 - BlueQueue = station_data_queue
 - YellowQueue = pdf_data_queue
+
+## General
+- JavaFX: Used to create the user interface (UI).
+- Java Spring Boot: Provides the REST-based API.
+- RabbitMQ: Manages the message queue for communication between components.
+
+## Workflow
+- User Interaction:
+  The user inputs a customer ID into the JavaFX UI and clicks the "Generate Invoice" button.
+- API Request:
+  The UI sends an HTTP request to the Spring Boot REST-based API to initiate the invoice generation process.
+- Data Gathering:
+  Upon receiving the request, the application starts a new data gathering job for the specified customer.
+- Message Queue:
+  The data gathering process is coordinated via RabbitMQ message queues.
+- PDF Generation:
+  Once the data is gathered, it is sent to a PDF generator service.
+  The PDF generator creates the invoice and saves it to the file system.
+- Polling for Completion:
+  The UI periodically checks (polls) the file system to see if the invoice PDF has been generated and is available.
+
