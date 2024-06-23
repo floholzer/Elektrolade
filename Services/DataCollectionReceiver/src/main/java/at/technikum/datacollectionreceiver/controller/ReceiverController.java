@@ -15,9 +15,9 @@ import java.util.concurrent.TimeoutException;
 @Controller
 public class ReceiverController {
     // Speichert die Stationsdaten
-    private static final Map<String, ArrayList<String>> stationDataMap = new HashMap<>();
-    private static final MessageService messageService = new MessageService();
-    private static String customerId;
+    static final Map<String, ArrayList<String>> stationDataMap = new HashMap<>();
+    static MessageService messageService = new MessageService();
+    static String customerId;
 
     // Methode, um empfangene Nachrichten zu verarbeiten und Stationsdaten zu sammeln
     public static void collect(String[] message) throws Exception {
@@ -27,20 +27,20 @@ public class ReceiverController {
             StringBuilder sb = new StringBuilder();
             // Iteriere über die Map und sende die Daten an den PDF Generator
             for (Map.Entry<String, ArrayList<String>> entry : stationDataMap.entrySet()) {
-                int stationId = Integer.parseInt(entry.getKey())+1;
+                int stationId = Integer.parseInt(entry.getKey())+1; // StationId um 1 erhöhen
                 ArrayList<String> kwhList = entry.getValue();
-                String kwhListString = String.join(",", kwhList);
-                sb.append(customerId).append(";").append(stationId).append(";").append(kwhListString).append("|");
+                String kwhListString = String.join(",", kwhList); // kwH-Liste in einen String umwandeln
+                sb.append(customerId).append(";").append(stationId).append(";").append(kwhListString).append("|"); // Zusammenfügen der Daten
             }
-            sb.deleteCharAt(sb.length() - 1); // Remove the last "|"
+            sb.deleteCharAt(sb.length() - 1); // Entfernen des letzten Zeichens "|"
             messageService.send(sb.toString());
-            stationDataMap.clear();
+            stationDataMap.clear(); // Leeren der Datamap
         } else {
             // Speichern der empfangenen Daten in der Map
-            customerId = message[0];
-            String stationId = message[1];
-            String kwh = message[2];
-            stationDataMap.computeIfAbsent(stationId, k -> new ArrayList<>()).add(kwh);
+            customerId = message[0]; // Kunden-ID speichern
+            String stationId = message[1]; // Station-ID speichern
+            String kwh = message[2]; // kwh speichern
+            stationDataMap.computeIfAbsent(stationId, k -> new ArrayList<>()).add(kwh); // Hinzufügen der kwh zur Station
         }
     }
 }

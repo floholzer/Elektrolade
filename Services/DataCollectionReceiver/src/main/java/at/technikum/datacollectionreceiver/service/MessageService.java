@@ -27,7 +27,7 @@ public class MessageService {
             // Create queue if not exists
             channel.queueDeclare(queueName, false, false, false, null);
 
-            channel.basicPublish("", queueName, null, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish("", queueName, null, message.getBytes(StandardCharsets.UTF_8)); // Send message to queue
             System.out.println(">> CollectionReceiver sent to Queue:'" + queueName + "', Message:'" + message + "'");
         }
         return true;
