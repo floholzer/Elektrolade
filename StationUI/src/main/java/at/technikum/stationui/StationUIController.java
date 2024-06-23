@@ -1,18 +1,12 @@
 package at.technikum.stationui;
 
-import java.io.*;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-public class HelloController {
+public class StationUIController {
 
     private static final String API_URL = "http://127.0.0.1:8080/invoices/";
 
@@ -20,20 +14,17 @@ public class HelloController {
     private TextField customerIDField;
 
     @FXML
-    private Label welcomeText;
-
-    @FXML
     protected void onGenerateInvoiceButtonClick() {
         String customerID = customerIDField.getText();  // assuming customerIDField is a TextField instance
 
-        if (customerID == null || customerID.wait().isEmpty()) {
+        if (customerID == null || customerID.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Error", "Customer ID missing");
             return;
         }
 
         String fileName = "Invoice_" + customerID + ".pdf";
         String apiUrl = API_URL + customerID + "/download";
-
+        /*
         try {
             // Generiere die Rechnung
             var generateRequest = HttpRequest.newBuilder()
@@ -45,8 +36,6 @@ public class HelloController {
 
             // Überprüfe, ob die Rechnung erfolgreich generiert wurde
             if (generateResponse.statusCode() == 200) {
-                // Hier wird der Dateiname basierend auf der Kunden-ID erstellt
-                String fileName = "Invoice_" + customerID + ".pdf";  // Beispiel-Dateiname
 
                 // Erstellen Sie eine HTTP-Anfrage, um die PDF-Datei herunterzuladen
                 HttpRequest downloadRequest = HttpRequest.newBuilder()
@@ -88,6 +77,7 @@ public class HelloController {
             } catch(IOException | InterruptedException e){
                 showAlert(Alert.AlertType.WARNING, "Error", "REST-API Error \n" + e.toString());
             }
+         */
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
@@ -97,6 +87,7 @@ public class HelloController {
         alert.showAndWait();
     }
 
+    @FXML
     protected void onExitButtonClick(ActionEvent actionEvent) {
         System.exit(0);
     }
