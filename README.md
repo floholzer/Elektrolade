@@ -2,18 +2,18 @@
 An example setup for a Distributed Systems project. It contains five databases (PostgreSQL) with example data and a messaging queue (RabbitMQ).
 
 ## Services
-- Customer Database
+- **Customer Database**
 	- Contains customer data (id, first name, last name)
 	- URL: localhost:30001
-- Stations Database
+- **Stations Database**
 	- Contains station data (id, db_url, latitude, longitude)
 	- URL: localhost:30002
-- Individual Station Databases
+- **Individual Station Databases**
 	- Contains customer station data (id, kwh, customer_id)
 	- URL Station 1: localhost:30011
 	- URL Station 2: localhost:30012
 	- URL Station 3: localhost:30013
-- Queue
+- **Queue**
 	- URL: localhost:30003
 	- Web: localhost:30083
 
@@ -21,9 +21,13 @@ An example setup for a Distributed Systems project. It contains five databases (
 - [Docker](https://docs.docker.com/get-docker/)
 
 ## Start
+Run this command directly from here:
 ```shell
 docker-compose up
 ```
+Use the predefined Run/Debug Configurations in your IDE. (Top right corner)\
+**Start Services and API** - Starts all services and the API\
+**StationUI** - To start the JavaFX UI
 
 ## RabbitMQ-Dashboard
 - [RabbitMQ-Dashboard](http://localhost:30083)
@@ -33,6 +37,7 @@ docker-compose up
 
 ## Documentations
 - [RabbitMQ](https://www.rabbitmq.com/tutorials/tutorial-one-java.html)
+- [GitHub](https://github.com/floholzer/Elektrolade)
 
 ### Queue Names
 - RedQueue = start_queue
