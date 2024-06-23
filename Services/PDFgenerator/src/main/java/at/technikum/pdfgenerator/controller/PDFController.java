@@ -12,10 +12,13 @@ import com.itextpdf.layout.element.Paragraph;
 
 import at.technikum.pdfgenerator.service.DataService;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PDFController {
     public static final DataService dataService = new DataService();
@@ -31,10 +34,15 @@ public class PDFController {
             PdfDocument pdf = new PdfDocument(writer);
             Document doc = new Document(pdf);
             Image img = new Image(ImageDataFactory.create("Services/PDFgenerator/src/main/resources/images/logo.jpeg"));
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+
 
             doc.add(img);
             doc.add(new Paragraph("Invoice").setFontSize(18).setFontColor(ColorConstants.BLACK));
-            doc.add(new Paragraph(LocalDateTime.now().toString()).setFontSize(12).setFontColor(ColorConstants.BLACK));
+            doc.add(new Paragraph(formattedDateTime).setFontSize(12).setFontColor(ColorConstants.BLACK).setTextAlignment(TextAlignment.RIGHT));
+            //doc.add(new Paragraph(LocalDateTime.now().toString()).setFontSize(12).setFontColor(ColorConstants.BLACK));
             doc.add(new Paragraph("Customer: " + customer.getFirst_name() + " " + customer.getLast_name()).setFontSize(12).setFontColor(ColorConstants.BLACK));
 
             for (String stationData : stationDataArray) {
