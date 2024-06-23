@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Services and API" type="CompoundRunConfigurationType">
+    <toRun name="Collector" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Dispatcher" type="SpringBootApplicationConfigurationType" />
+    <toRun name="PDFGenerator" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Receiver" type="SpringBootApplicationConfigurationType" />
+    <toRun name="StationAPI" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
