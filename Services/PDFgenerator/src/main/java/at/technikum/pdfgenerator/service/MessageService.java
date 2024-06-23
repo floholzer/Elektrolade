@@ -22,6 +22,9 @@ public class MessageService {
         Channel channel = connection.createChannel();
         String queueName = "pdf_generator";
 
+        // Create queue if not exists
+        channel.queueDeclare(queueName, false, false, false, null);
+
         System.out.println(">> PDFGenerator listening to Queue: " + queueName);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {

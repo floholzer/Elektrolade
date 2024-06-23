@@ -41,6 +41,9 @@ public class MessageService {
         Channel channel = connection.createChannel();
         String queueName = "start_queue";
 
+        // Create queue if not exists
+        channel.queueDeclare(queueName, false, false, false, null);
+
         System.out.println(">> Dispatcher listening to Queue: " + queueName);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {

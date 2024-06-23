@@ -60,6 +60,9 @@ public class MessageService {
         Channel channel = connection.createChannel();
         String queueName = "stations_info_queue";
 
+        // Create queue if not exists
+        channel.queueDeclare(queueName, false, false, false, null);
+
         System.out.println(">> DataCollector listening to Queue:'" + queueName + "'");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {

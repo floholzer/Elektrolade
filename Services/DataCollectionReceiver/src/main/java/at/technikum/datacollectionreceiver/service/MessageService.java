@@ -38,6 +38,9 @@ public class MessageService {
         Channel channel = connection.createChannel();
         String queueName = "job_notify_queue";
 
+        // Create queue if not exists
+        channel.queueDeclare(queueName, false, false, false, null);
+
         System.out.println(">> CollectionReceiver listening to Queue: '" + queueName + "'");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
@@ -57,6 +60,9 @@ public class MessageService {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
         String queueName = "station_data_queue";
+
+        // Create queue if not exists
+        channel.queueDeclare(queueName, false, false, false, null);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
