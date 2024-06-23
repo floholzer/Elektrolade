@@ -32,7 +32,7 @@ class RESTControllerTest {
     }
 
     @Test
-    public void collectInvoice_ThrowsException_WhenMessageServiceThrowsException() throws Exception {
+    public void collectInvoice_ThrowsException_WhenCustomerID_isInValid() throws Exception {
         int customerId = -12;
 
         doThrow(new IOException()).when(messageService).send(String.valueOf(customerId));
