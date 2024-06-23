@@ -33,3 +33,10 @@ docker-compose up
 
 ## Documentations
 - [RabbitMQ](https://www.rabbitmq.com/tutorials/tutorial-one-java.html)
+
+### Queue Names
+- RedQueue = start_queue
+- GreenQueue = stations_info_queue
+- PurpleQueue = job_notify_queue
+- BlueQueue = station_data_queue
+- YellowQueue = pdf_data_queue
