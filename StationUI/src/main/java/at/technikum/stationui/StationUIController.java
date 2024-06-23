@@ -47,7 +47,6 @@ public class StationUIController {
         // POST-Request senden
         var generateRequest = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL + customerID))
-                .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(customerID))
                 .build();
 
