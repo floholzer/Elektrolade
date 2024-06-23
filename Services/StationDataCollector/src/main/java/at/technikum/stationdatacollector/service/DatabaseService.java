@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @Service
 public class DatabaseService {
 
-    // Stellt eine Verbindung zur angegebenen Datenbank her
+    // Methode zum Herstellen einer Verbindung zur Datenbank
     private static Connection connect(String dbUrl) throws SQLException {
         String connectionString="jdbc:postgresql://"+dbUrl+"/stationdb";
         return DriverManager.getConnection(connectionString, "postgres", "postgres");

@@ -11,6 +11,6 @@ public class StationDataCollectorApplication {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(StationDataCollectorApplication.class, args);
-        messageService.receive();
+        messageService.receive(); // Startet den Listener zum Empfangen von Nachrichten
     }
 }

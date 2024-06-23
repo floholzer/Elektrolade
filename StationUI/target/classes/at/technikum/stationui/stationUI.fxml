@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="292.0" prefWidth="240.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.technikum.stationui.StationUIController">
+  <padding>
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+  </padding>
+   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../image/logo.jpeg" />
+      </image>
+   </ImageView>
+   <TextField fx:id="customerIDField" promptText="Enter Customer ID" />
+   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+      <children>
+        <Button onAction="#onGenerateInvoiceButtonClick" text="Generate Invoice">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <HBox.margin>
+               <Insets right="25.0" />
+            </HBox.margin></Button>
+         <Button mnemonicParsing="false" onAction="#onExitButtonClick" text="Exit">
+            <HBox.margin>
+               <Insets left="25.0" />
+            </HBox.margin>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+      </children>
+   </HBox>
+</VBox>

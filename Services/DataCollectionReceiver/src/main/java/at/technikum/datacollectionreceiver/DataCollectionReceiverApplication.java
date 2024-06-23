@@ -10,7 +10,7 @@ public class DataCollectionReceiverApplication {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(DataCollectionReceiverApplication.class, args);
-        messageService.DispatcherListener();
-        messageService.DataCollectorListener();
+        messageService.DispatcherListener(); // Startet den Listener für Dispatcher-Nachrichten
+        messageService.DataCollectorListener(); // Startet den Listener für DataCollector-Nachrichten
     }
 }
