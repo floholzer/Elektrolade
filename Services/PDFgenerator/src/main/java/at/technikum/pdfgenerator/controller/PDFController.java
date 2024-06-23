@@ -21,7 +21,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class PDFController {
-    public static final DataService dataService = new DataService();
+    private static DataService dataService;
+
+    // Methode zum Setzen des DataService für Tests
+    public static void setDataService(DataService dataService) {
+        PDFController.dataService = dataService;
+    }
 
     public static void generateInvoice(String messageData) throws Exception {
         String[] stationDataArray = messageData.split("\\|");
