@@ -63,7 +63,7 @@ public class StationUIController {
                     File folder = new File("StationAPI/src/main/java/at/technikum/stationapi/files");
                     File[] listOfFiles = folder.listFiles();
 
-                    if (listOfFiles != null && listOfFiles.length > 0) {
+                    if (listOfFiles != null && listOfFiles.length > 1) {
                         // GET-Request senden
                         try {
                             URL url = new URL(API_URL + customerID);
