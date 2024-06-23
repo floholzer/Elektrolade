@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Receiver" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="DataCollectionReceiver" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="at.technikum.datacollectionreceiver.DataCollectionReceiverApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

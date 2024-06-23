@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Collector" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="StationDataCollector" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="at.technikum.stationdatacollector.StationDataCollectorApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
