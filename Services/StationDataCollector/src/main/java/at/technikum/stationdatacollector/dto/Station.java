@@ -11,6 +11,7 @@ public class Station {
         private float kwh;
         private int customer_id;
 
+        // Überschreiben der toString-Methode für lesbare Ausgabe
         public String toString() {
                 return "Station{" +
                         "id=" + id +
