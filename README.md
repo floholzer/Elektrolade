@@ -68,3 +68,6 @@ Use the predefined Run/Debug Configurations in your IDE. (Top right corner)\
 - Polling for Completion:
   The UI periodically checks (polls) the file system to see if the invoice PDF has been generated and is available.
 
+## Diagrams
+![uml_elektrolade](https://github.com/floholzer/Elektrolade/assets/13693792/ff5b1e45-b449-4c4b-adf1-82fe8a6267a4)
+*UML Diagram*
