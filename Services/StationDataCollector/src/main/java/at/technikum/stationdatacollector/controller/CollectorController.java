@@ -32,7 +32,7 @@ public class CollectorController {
                 throw new RuntimeException(e);
             }
 
-            index = 0; // Zurücksetzen des Zählers
+            index = 1; // Zurücksetzen des Zählers
         } else {
             try {
                 // Abrufen der Stationsdaten von der Datenbank

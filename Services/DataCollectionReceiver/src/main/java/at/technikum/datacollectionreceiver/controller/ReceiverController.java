@@ -27,7 +27,7 @@ public class ReceiverController {
             StringBuilder sb = new StringBuilder();
             // Iteriere über die Map und sende die Daten an den PDF Generator
             for (Map.Entry<String, ArrayList<String>> entry : stationDataMap.entrySet()) {
-                int stationId = Integer.parseInt(entry.getKey())+1; // StationId um 1 erhöhen
+                int stationId = Integer.parseInt(entry.getKey());
                 ArrayList<String> kwhList = entry.getValue();
                 String kwhListString = String.join(",", kwhList); // kwH-Liste in einen String umwandeln
                 sb.append(customerId).append(";").append(stationId).append(";").append(kwhListString).append("|"); // Zusammenfügen der Daten
