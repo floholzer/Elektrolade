@@ -1,4 +1,5 @@
-![logo_elektrolade](https://github.com/floholzer/Elektrolade/assets/13693792/2486f078-e0ae-41f9-bac6-d29e4b5711f9)
+![logo_elektrolade](https://github.com/floholzer/Elektrolade/assets/13693792/271f2fd4-60b5-43cb-a4a2-6f3f77c1c8a1)
+
 
 # Elektrolade - Charging Stations
 Elektrolade is a distributed system designed to generate invoices for customers utilising electric charging
