@@ -36,16 +36,16 @@ public class generateInvoiceTest{
     @Test
     void testGenerateInvoice() throws Exception {
         // Setup mock customer
-        Customer mockCustomer = new Customer();
+        /*Customer mockCustomer = new Customer();
         mockCustomer.setFirst_name("John");
         mockCustomer.setLast_name("Doe");
         when(dataService.getCustomer(1)).thenReturn(mockCustomer);
-
+        */
         // Test data
         String messageData = "1;1;10,20,30|1;2;5,15";
 
         // Call the method
-        PDFController.generateInvoice(messageData);
+        PDFController.generateInvoice(messageData); //File Path Error?
 
         // Verify the PDF was created
         File file = new File("StationAPI/src/main/java/at/technikum/stationapi/files/invoice-1.pdf");
