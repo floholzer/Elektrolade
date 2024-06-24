@@ -2,7 +2,7 @@
 
 
 # Elektrolade - Charging Stations
-Elektrolade is a distributed system designed to generate invoices for customers utilising electric charging
+Elektrolade is a distributed system designed to generate invoices for customers of electric charging
 stations. The system integrates a SpringBoot REST-API, RabbitMQ message queue, and a JavaFX UI. In the UI, the user can
 input a customer ID to generate an invoice, which is then downloaded as a PDF file to the local file system.
 
