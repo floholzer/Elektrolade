@@ -1,3 +1,5 @@
+![logo_elektrolade](https://github.com/floholzer/Elektrolade/assets/13693792/2486f078-e0ae-41f9-bac6-d29e4b5711f9)
+
 # Elektrolade - Charging Stations
 Elektrolade is a distributed system designed to generate invoices for customers utilising electric charging
 stations. The system integrates a SpringBoot REST-API, RabbitMQ message queue, and a JavaFX UI. In the UI, the user can
