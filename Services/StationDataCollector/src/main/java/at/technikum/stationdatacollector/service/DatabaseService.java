@@ -20,11 +20,11 @@ public class DatabaseService {
     public ArrayList<Station> getStations(String customerId, String dbUrl) throws SQLException {
         ArrayList<Station> stations = new ArrayList<>();
 
-        try (Connection conn = connect(dbUrl)) {
+        try (Connection conn = connect(dbUrl)) { // Herstellen einer Verbindung zur Datenbank
             String query = "SELECT id, kwh, customer_id FROM charge WHERE customer_id = " + customerId + ";";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet resultSet = stmt.executeQuery();
-            while (resultSet.next()) {
+            PreparedStatement stmt = conn.prepareStatement(query); // Erstellen einer SQL-Abfrage
+            ResultSet resultSet = stmt.executeQuery(); // Ausführen der Abfrage
+            while (resultSet.next()) { // Iterieren über die Ergebnisse
                 Station station = new Station(
                         resultSet.getInt(1),
                         resultSet.getFloat(2),

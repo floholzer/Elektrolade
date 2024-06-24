@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 public class MessageService {
     private ConnectionFactory factory = new ConnectionFactory();
 
-    // Sendet eine Nachricht an eine bestimmte Zieladresse über RabbitMQ
+    // Sendet eine Nachricht über RabbitMQ "station_data_queue"
     public boolean send(int stationId, String kwh, String customer_id) throws Exception {
         factory.setHost("localhost");
         factory.setPort(30003);
@@ -35,7 +35,7 @@ public class MessageService {
         return true;
     }
     // Methode zum Senden einer Endnachricht
-    public boolean sendEnd() throws Exception {
+    public boolean sendEnd() throws Exception { //diese Methode wird aufgerufen, wenn die Datensammlung in der Datenbank in der Methode collect beendet ist
         factory.setHost("localhost");
         factory.setPort(30003);
         String message = "data end";

@@ -24,7 +24,7 @@ public class CollectorController {
     // Methode, um Nachrichten zu verarbeiten und Stationsdaten zu sammeln
     public static void collect(String customerId, String db_url) {
         ArrayList<Station> stations;
-        if (db_url.equals("collection ended")) {
+        if (db_url.equals("collection ended")) { //"collection ended" wird in der Methode collect in der Klasse DatabaseService übergeben, um das Ende der Datensammlung zu signalisieren
     // Wenn die Nachricht "collection ended" ist, wird das Ende der Datensammlung signalisiert
             try {
                 messageService.sendEnd(); // Senden einer Endnachricht
