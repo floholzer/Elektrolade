@@ -1,5 +1,7 @@
-# Distributed Systems Semester Project
-An example setup for a Distributed Systems project. It contains five databases (PostgreSQL) with example data and a messaging queue (RabbitMQ).
+# Elektrolade - Charging Stations
+Elektrolade is a distributed system designed to generate invoices for customers utilising electric charging
+stations. The system integrates a SpringBoot REST-API, RabbitMQ message queue, and a JavaFX UI. In the UI, the user can
+input a customer ID to generate an invoice, which is then downloaded as a PDF file to the local file system.
 
 ## Services
 - **Customer Database**
